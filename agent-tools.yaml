@@ -45,7 +45,7 @@ cache:
   dir: .agent-tools-cache
   default_ttl_seconds: 60
 
-# `just init TARGET=/path/to/project` installs the toolbox into a
+# `just init /path/to/project` installs the toolbox into a
 # target project: copies AGENT.md + .agent/skills/ into its root and
 # validates the environment. Listed here so the contract is explicit.
 install:

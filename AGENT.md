@@ -13,9 +13,9 @@ Use it to avoid ad-hoc commands for repeated operations.
    workdir, commit identity, GitHub policy.
 2. Read the skills in `.agent/skills/` — they are decision recipes,
    not docs. Follow them; do not re-derive flows.
-3. Use `just` recipes for all GitHub / CI / merge operations
-   (`just --list`). Never hand-craft `gh` / `git -c` incantations —
-   that wastes tokens and is error-prone.
+3. Use existing `just` recipes before hand-crafting GitHub / CI commands
+   (`just --list`). If a recipe does not exist yet, follow the relevant
+   skill and add the recipe after the workflow becomes frequent.
 
 ## Operating Rules
 
@@ -27,7 +27,20 @@ Use it to avoid ad-hoc commands for repeated operations.
 - Put repeatable process knowledge in `.agent/skills/`.
 - Do not store secrets, tokens, raw issue bodies, or full CI logs in cache.
 
-## Canonical development loop
+## Current command loop
+
+```sh
+just --list               # discover supported recipes
+just gh-rate-limit        # check shared GitHub API budget
+just gh-pr <number>       # inspect PR context through the cached wrapper
+just gh-ci-runs           # inspect recent CI runs through the cached wrapper
+just gh-ci-run <run-id>   # inspect one CI run through the cached wrapper
+```
+
+## Target development loop
+
+The following recipes are the intended next layer. They are not implemented
+yet; follow `.agent/skills/dev-flow` manually until the recipes exist.
 
 ```sh
 just sync                 # fetch + checkout fresh default branch
@@ -37,7 +50,7 @@ just verify               # local lint / type-check / tests, if defined
 just commit "<message>"   # identity + trailer + owner line injected
 just pr-new               # push + open PR (templated body)
 # CI runs → on red, follow .agent/skills/ci-triage
-just pr-merge PR=<n>      # squash + delete-branch when green
+just pr-merge <n>         # squash + delete-branch when green
 ```
 
 ## Hard rules (enforced via config + skills)
