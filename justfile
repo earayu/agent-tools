@@ -12,6 +12,14 @@ help:
 bootstrap:
     sh scripts/project/bootstrap.sh
 
+# Install the toolbox (AGENT.md + .agent/skills) into a target project.
+init target mode="copy":
+    {{python}} scripts/project/init.py --config {{config}} --target "{{target}}" --mode "{{mode}}"
+
+# Install into a target project, overwriting existing files.
+init-force target mode="copy":
+    {{python}} scripts/project/init.py --config {{config}} --target "{{target}}" --mode "{{mode}}" --force
+
 # Show GitHub rate buckets.
 gh-rate-limit:
     {{python}} scripts/github/agent-gh.py --config {{config}} rate-limit
