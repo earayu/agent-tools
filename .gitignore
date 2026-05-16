@@ -1,0 +1,5 @@
+.agent-tools-cache/
+__pycache__/
+*.py[cod]
+.DS_Store
+

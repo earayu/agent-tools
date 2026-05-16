@@ -1,0 +1,10 @@
+project:
+  name: agent-tools
+  workdir: .
+github:
+  repo: earayu/agent-tools
+  default_branch: main
+cache:
+  dir: .agent-tools-cache
+  default_ttl_seconds: 60
+
