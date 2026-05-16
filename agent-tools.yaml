@@ -4,7 +4,55 @@ project:
 github:
   repo: earayu/agent-tools
   default_branch: main
+  # Shared GitHub core rate limit (5000/h) is consumed by every agent
+  # on the box. The wrappers cache reads and back off instead of each
+  # agent polling raw gh.
+  rate_limit:
+    warn_remaining: 200          # warn when the core bucket drops below this
+    backoff_on_exhaustion: true  # sleep-until-reset, not a blind retry loop
+  ci:
+    # run-failed-log key-line extraction: only surface lines matching
+    # these so a full 10-50KB log never lands in agent context.
+    failed_log_signal_patterns:
+      - "FAILED tests/"
+      - "Type error"
+      - "AssertionError"
+      - "Connection refused"
+      - "Error TS"
+      - "Would reformat"
+      - "no such function"
+      - "exit code"
+    failed_log_max_lines: 25
+  merge:
+    strategy: squash             # squash | merge | rebase
+    delete_branch: true
+    require_green: true          # never merge red unless an explicit override
+
+# Commit identity. Solves the recurring "Author identity unknown"
+# failure on shared boxes with no git identity. Tools inject this for
+# every commit/merge so agents never hand-craft `git -c user.name=...`.
+# Override per-project; leave blank to fall back to the machine's git
+# config (and fail loudly if none).
+identity:
+  user_name: ""
+  user_email: ""
+  # Trailer appended to every agent-authored commit.
+  commit_trailer: ""
+  # Required first line of every PR body (project convention; blank to skip).
+  pr_owner_line: ""
+
 cache:
   dir: .agent-tools-cache
   default_ttl_seconds: 60
 
+# `just init /path/to/project` installs the toolbox into a
+# target project: copies AGENT.md + .agent/skills/ into its root and
+# validates the environment. Listed here so the contract is explicit.
+install:
+  copy_into_target:
+    - AGENT.md
+    - .agent/skills/
+  validate:
+    - git
+    - gh
+    - gh_auth
